@@ -1,5 +1,7 @@
+[![Build Status](https://travis-ci.org/xjdrew/gotunnel.svg?branch=master)](https://travis-ci.org/xjdrew/gotunnel)
+
 ## gotunnel
-gotunnel is a secure tcp tunnel software. It use persistent tcp connection(s) to comminicate bettwen client and server, so it's not a port forwarder.
+gotunnel is a secure tcp tunnel software. It can use tcp or udp connectioin as low level tunnel.
 
 gotunnel could be added to any c/s system using tcp protocal. Make system structure evolve from
 ```
@@ -13,22 +15,44 @@ to gain gotunnel's valuable features, such as secure and persistent.
 
 ## build
 
-In your go workspace, run command as below:
+###1. download codebase
 ```bash
-go get -u github.com/xjdrew/gotunnel
+go get -u -d github.com/xjdrew/gotunnel
 ```
-If you don't known how to create a golang workspace, please see [install.sh](https://github.com/xjdrew/gotunnel/blob/master/install.sh)
+###2. build udt
+```bash
+cd ${GOPATH}/src/github.com/xjdrew/go-udtwrapper/udt4/src && make libudt.a && cp libudt.a ${GOPATH}
+```
+###3. build gotunnel
+```bash
+GOPATH=${GOPATH} CGO_LDFLAGS=-L${GOPATH} go install github.com/xjdrew/gotunnel
+```
+
+* build automatically
+
+You can run the script [install.sh](https://github.com/xjdrew/gotunnel/blob/master/install.sh) directly:
+```
+bash <<(curl -fsSL https://github.com/xjdrew/gotunnel/blob/master/install.sh)
+```
 
 ## Usage
 
 ```
 usage: bin/gotunnel
-  -backend="127.0.0.1:1234": backend address
-  -listen=":8001": listen address
-  -log=1: log level
-  -secret="the answer to life, the universe and everything": tunnel secret
-  -timeout=10: tunnel read/write timeout
-  -tunnels=0: low level tunnel count, 0 if work as server
+  -backend string
+        backend address (default "127.0.0.1:1234")
+  -listen string
+        listen address (default ":8001")
+  -log uint
+        log level (default 1)
+  -secret string
+        tunnel secret (default "the answer to life, the universe and everything")
+  -timeout int
+        tunnel read/write timeout (default 3)
+  -tunnels uint
+        low level tunnel count, 0 if work as server
+  -udt
+        udt tunnel
 ```
 
 some options:
